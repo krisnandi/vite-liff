@@ -14,6 +14,11 @@
     <p v-if="isInClient">isInClient: {{ isInClient }}</p>
     <p v-else>not isInClient</p>
     <div class="lineborder" />
+
+    <button @click="goToRedirectUrl">go to Redirect URl</button>
+    <p>{{ redirectUrl }}</p>
+    <div class="lineborder" />
+
   </section>
 
   <liffForm title="localStorage" @get="localStorageGet" @set="localStorageSet">
@@ -66,6 +71,16 @@
     return ""
   }
 
+  const getParameterByName = (name, url) => {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+      results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+  }
+
   export default {
     name: 'App',
     components: {
@@ -80,9 +95,11 @@
 
         liffToken: '',
         isInClient: '',
+        redirectUrl: ''
       }
     },
-    created() {
+    created () {
+      this.redirectUrl = getParameterByName('redirectUrl')
     },
     methods: {
       localStorageSet({ key, value }) {
@@ -108,6 +125,9 @@
       },
       goToUrl () {
         location.href = this.url
+      },
+      goToRedirectUrl () {
+        location.replace(this.redirectUrl)
       },
 
       initializeLiff () {
