@@ -5,11 +5,12 @@
     <div class="lineborder" />
 
 
-    <button @click="initializeLiff">get liff token</button>
+    <button @click="getliffAccessToken">get liff token</button>
     <p v-if="liffToken">liff token: {{ liffToken }}</p>
     <p v-else>no liff token</p>
     <div class="lineborder" />
 
+    <button @click="checkIsInClient">check isInClient</button>
     <p v-if="isInClient">isInClient: {{ isInClient }}</p>
     <p v-else>not isInClient</p>
     <div class="lineborder" />
@@ -33,7 +34,7 @@
     <div class="lineborder" />
     <button @click="goToUrl">Go To</button>
     <div class="lineborder" />
-    <button @click="openWindow">Open Window</button>
+    <button @click="openliffWindow">Open Liff Window</button>
     <div class="lineborder" />
     <button @click="closeWindow">Close Window</button>
   </section>
@@ -78,7 +79,7 @@
         url: '',
 
         liffToken: '',
-        isInClient: isInLine(),
+        isInClient: '',
       }
     },
     created() {
@@ -113,16 +114,20 @@
         liffInit()
       },
 
-      getAccessToken () {
+      getliffAccessToken () {
         this.liffToken = getAccessToken()
       },
 
-      openWindow () {
+      openliffWindow () {
         openWindow(this.url)
       },
 
       closeWindow () {
         closeWindow()
+      },
+
+      checkIsInClient () {
+        this.isInClient = isInLine()
       }
     }
   }
