@@ -11,7 +11,7 @@ export function init () {
       document.head.appendChild(script)
       script.onload = async () => {
         let liffId = '1654247933-dK2YBpAb'
-        await liff.init({ liffId }).then(res => alert(res))
+        await liff.init({ liffId })
         resolve()
       }
     }

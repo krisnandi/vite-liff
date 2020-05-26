@@ -127,7 +127,7 @@
         location.href = this.url
       },
       goToRedirectUrl () {
-        location.replace(this.redirectUrl)
+        location.href = this.redirectUrl
       },
 
       initializeLiff () {
