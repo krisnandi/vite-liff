@@ -1,6 +1,7 @@
 export function init () {
   return new Promise(resolve => {
     const sdkScriptTag = document.getElementById('line_SDK')
+    console.log(sdkScriptTag)
     if (sdkScriptTag) {
       resolve()
     } else {
@@ -10,7 +11,7 @@ export function init () {
       document.head.appendChild(script)
       script.onload = async () => {
         let liffId = '1654247933-dK2YBpAb'
-        await liff.init({ liffId })
+        await liff.init({ liffId }).then(res => alert(res))
         resolve()
       }
     }
