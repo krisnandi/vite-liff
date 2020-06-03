@@ -35,6 +35,8 @@
     <div class="lineborder" />
     <button @click="goToUrl">Go To</button>
     <div class="lineborder" />
+    <button @click="goToReplace">Go To Replace</button>
+    <div class="lineborder" />
     <button @click="openExternalWindow">Open External Window</button>
     <div class="lineborder" />
     <button @click="openInternalWindow">Open Internal Window</button>
@@ -121,6 +123,9 @@
       },
       goToUrl () {
         location.href = this.url
+      },
+      goToReplace () {
+        location.replace(this.url)
       },
       goToRedirectUrl () {
         location.replace(this.redirectUrl)
