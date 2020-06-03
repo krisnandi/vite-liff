@@ -1,46 +1,60 @@
-export function init () {
-  return new Promise(resolve => {
-    const sdkScriptTag = document.getElementById('line_SDK')
-    console.log(sdkScriptTag)
-    if (sdkScriptTag) {
-      resolve()
-    } else {
-      const script = document.createElement('script')
-      script.id = 'line_SDK'
-      script.src = 'https://static.line-scdn.net/liff/edge/2.1/sdk.js'
-      document.head.appendChild(script)
-      script.onload = async () => {
-        let liffId = '1654247933-dK2YBpAb'
-        await liff.init({ liffId })
+const LIFF = {
+  attachSDK () {
+    return new Promise((resolve, reject) => {
+      const sdkScriptTag = document.getElementById('line_SDK')
+      if (sdkScriptTag) {
         resolve()
+      } else {
+        const script = document.createElement('script')
+        script.id = 'line_SDK'
+        script.src = 'https://static.line-scdn.net/liff/edge/2.1/sdk.js'
+        document.head.appendChild(script)
+        script.onload = () => resolve()
       }
+    })
+  },
+
+  initSDK (liffId) {
+    if (!liffId) {
+      alert('no liff Id')
+      return
     }
-  })
+    if (!liff) {
+      attachSDK().then(() => {return init(liffId)})
+    }
+
+    return new Promise(resolve => {
+      if (!this.isInClient()) {
+        resolve({ success: false })
+      } else {
+        liff.init({ liffId }, () => resolve({ success: true }), () => resolve({ success: false }))
+      }
+    })
+  },
+
+  isLIFFExist () {
+    return window.liff && liff
+  },
+
+  isInClient () {
+    return this.isLIFFExist && liff.isInClient()
+  },
+
+  openWindow (option) {
+    return this.isLIFFExist && liff.openWindow(option)
+  },
+
+  closeWindow () {
+    return this.isLIFFExist && liff.closeWindow()
+  },
+
+  isLoggedIn () {
+    return this.isLIFFExist && liff.isLoggedIn()
+  },
+
+  getAccessToken () {
+    return this.isLIFFExist && this.isLoggedIn() && liff.getAccessToken()
+  },
 }
 
-export async function login () {
-  if (!liff.isLoggedIn()) {
-    const redirectUri = location.href
-    await liff.login({ redirectUri })
-  }
-}
-
-export function isInLine () {
-  return window.liff && window.liff.isInClient()
-}
-
-export function getAccessToken () {
-  return window.liff && window.liff.getAccessToken()
-}
-
-export function getIDToken () {
-  return window.liff && window.liff.getIDToken()
-}
-
-export function openWindow (url) {
-  return window.liff && window.liff.openWindow(url)
-}
-
-export function closeWindow () {
-  return window.liff && window.liff.closeWindow()
-}
+export default LIFF

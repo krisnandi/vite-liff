@@ -1,59 +1,52 @@
 <template>
   <img alt="Vue logo" src="./logo.png" />
   <section class="liff-container">
+    <button @click="attachLiff">Attach Liff SDK</button>
+    <div class="lineborder" />
+
+    <input type="text" v-model="liffId" placeholder="liff id">
     <button @click="initializeLiff">Initialize Liff</button>
     <div class="lineborder" />
 
-
-    <button @click="getliffAccessToken">get liff token</button>
-    <p v-if="liffToken">liff token: {{ liffToken }}</p>
-    <p v-else>no liff token</p>
+    <button @click="checkIsLIFFExist">check isLIFFExist</button>
     <div class="lineborder" />
 
     <button @click="checkIsInClient">check isInClient</button>
-    <p v-if="isInClient">isInClient: {{ isInClient }}</p>
-    <p v-else>not isInClient</p>
+    <div class="lineborder" />
+
+    <button @click="checkIsLoggedIn">check isLoggedIn</button>
     <div class="lineborder" />
 
     <button @click="goToRedirectUrl">go to Redirect URl</button>
     <p>{{ redirectUrl }}</p>
     <div class="lineborder" />
 
+    <button @click="getLiffAccessToken">get liff token</button>
+    <p v-if="liffToken">liff token: {{ liffToken }}</p>
+    <p v-else>no liff token</p>
   </section>
 
-  <liffForm title="localStorage" @get="localStorageGet" @set="localStorageSet">
-<!--    <p v-if="this.local">{{ this.local }}</p>-->
-<!--    <p v-else>Nothing</p>-->
-  </liffForm>
-  <liffForm title="sessionStorage" @get="sessionStorageGet" @set="sessionStorageSet">
-<!--    <p v-if="this.session">{{ this.session }}</p>-->
-<!--    <p v-else>Nothing</p>-->
-  </liffForm>
-  <liffForm title="cookie" @get="cookieGet" @set="cookieSet" >
-<!--    <p v-if="this.cookie">{{ this.cookie }}</p>-->
-<!--    <p v-else>Nothing</p>-->
-  </liffForm>
+  <liffForm title="localStorage" @get="localStorageGet" @set="localStorageSet"></liffForm>
+  <liffForm title="sessionStorage" @get="sessionStorageGet" @set="sessionStorageSet"></liffForm>
+  <liffForm title="cookie" @get="cookieGet" @set="cookieSet" ></liffForm>
 
   <section class="goToUrl">
     <input type="text" v-model="url" placeholder="url">
     <div class="lineborder" />
     <button @click="goToUrl">Go To</button>
     <div class="lineborder" />
-    <button @click="openliffWindow">Open Liff Window</button>
+    <button @click="openExternalWindow">Open External Window</button>
+    <div class="lineborder" />
+    <button @click="openInternalWindow">Open Internal Window</button>
     <div class="lineborder" />
     <button @click="closeWindow">Close Window</button>
+    <div class="lineborder" />
   </section>
 </template>
 
 <script>
   import liffForm from './components/liffForm.vue'
-  import {
-    init as liffInit,
-    isInLine,
-    getAccessToken,
-    openWindow,
-    closeWindow,
-  } from './utils/liffUtils'
+  import liffUtils from './utils/liffUtils'
 
   const getCookie = (cname) => {
     const name = cname + "=";
@@ -93,8 +86,11 @@
         cookie: '',
         url: '',
 
+        liffId: '',
         liffToken: '',
+        isLIFFExist: '',
         isInClient: '',
+        isLoggedIn: '',
         redirectUrl: ''
       }
     },
@@ -127,28 +123,42 @@
         location.href = this.url
       },
       goToRedirectUrl () {
-        location.href = this.redirectUrl
+        location.replace(this.redirectUrl)
       },
 
+      attachLiff () {
+        liffUtils.attachSDK()
+      },
       initializeLiff () {
-        liffInit()
+        liffUtils.initSDK(this.liffId)
+      },
+      getLiffAccessToken () {
+        alert(liffUtils.getAccessToken())
+        this.liffToken = liffUtils.getAccessToken()
       },
 
-      getliffAccessToken () {
-        this.liffToken = getAccessToken()
+      openExternalWindow () {
+        liffUtils.openWindow( { url: this.url, external: true })
       },
-
-      openliffWindow () {
-        openWindow(this.url)
+      openInternalWindow () {
+        liffUtils.openWindow( { url: this.url, external: false })
       },
 
       closeWindow () {
-        closeWindow()
+        liffUtils.closeWindow()
+      },
+
+      checkIsLIFFExist () {
+        alert(liffUtils.isLIFFExist())
       },
 
       checkIsInClient () {
-        this.isInClient = isInLine()
-      }
+        alert(liffUtils.isInClient())
+      },
+
+      checkIsLoggedIn () {
+        alert(liffUtils.isLoggedIn())
+      },
     }
   }
 </script>
@@ -164,6 +174,10 @@
   .liff-container button {
     font-size: 4rem;
     width: 100%;
+  }
+  .liff-container input {
+    font-size: 4rem;
+    margin-bottom: 1rem;
   }
 
   .goToUrl {
